@@ -25,6 +25,7 @@ public class Car : MonoBehaviour {
         UpdateInputs();
         ApplyPlayerInput();
         ApplyPhysicFriction();
+        UpdateWeightTransfer();
     }
 
     void InitComponents()
@@ -41,7 +42,7 @@ public class Car : MonoBehaviour {
 
     void UpdateInputs()
     {
-        m_fInputAcceleration = Input.GetAxisRaw("Acceleration");
+        m_fInputAcceleration = Input.GetAxisRaw("Vertical");
         m_fInputDirection = Input.GetAxisRaw("Horizontal");
         m_fInputBrake = Input.GetAxisRaw("Brake");
     }
@@ -88,4 +89,66 @@ public class Car : MonoBehaviour {
         float fMagnitude = vSpeed.magnitude;
         return fMagnitude;
     }
+
+    private void UpdateWeightTransfer()
+    {
+        float fdTime = Time.fixedDeltaTime;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Rigidbody rigidbody = GetComponent<Rigidbody>();
+        Vector3 vCOMWorldPosition = rigidbody.worldCenterOfMass;
+        Vector3 vRelativePosition = rigidbody.centerOfMass;
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(vCOMWorldPosition, 1.0f);
+        Gizmos.color = Color.gray;
+
+        // BoundingBox
+        BoxCollider boxCollider = GetComponent<BoxCollider>();
+
+        Bounds boudingBox = boxCollider.bounds;
+        Vector3 vBoundingBoxMin = boudingBox.min;
+        Vector3 vBoundingBoxMax = boudingBox.max;
+        
+        Gizmos.color = Color.green;
+        Debug.Log("BoundingBox min = " + vBoundingBoxMin);
+
+        Gizmos.DrawWireSphere(vBoundingBoxMin,0.5f);
+        Gizmos.DrawWireSphere(vBoundingBoxMax, 0.5f);
+
+
+    }
+
+    public void GetCenterOfMassInformation()
+    {
+        // BoundingBox
+        
+
+
+    }
+
+
+    public Vector2 GetMassBoundingBoxRatio()
+    {
+        BoxCollider boxCollider = GetComponent<BoxCollider>();
+
+        Bounds boudingBox = boxCollider.bounds;
+        Vector3 vBoundingBoxMin = boudingBox.min;
+        Vector3 vBoundingBoxMax = boudingBox.max;
+
+        Quaternion qTransformRotation = transform.rotation;
+        Quaternion invertRotation = Quaternion.Inverse(qTransformRotation);
+
+        Vector3 minToMax = vBoundingBoxMax - vBoundingBoxMin;
+        minToMax =  invertRotation *minToMax;
+
+        Vector2 vBoundingHVector;
+        vBoundingHVector.x = minToMax.x;
+        vBoundingHVector.y = minToMax.z;
+
+        return vBoundingHVector;
+
+    }
+    
 }
