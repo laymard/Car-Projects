@@ -36,7 +36,11 @@ public class UIWeightTransfer : MonoBehaviour {
 
     private void ResizeCarShape(Vector2 _vSize)
     {
-        if(_vSize.x>_vSize.y)
+
+        _vSize.x = Mathf.Abs(_vSize.x);
+        _vSize.y = Mathf.Abs(_vSize.y);
+
+        if (_vSize.x>_vSize.y)
         {
             _vSize /= _vSize.x;
         }
